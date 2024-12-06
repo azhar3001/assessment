@@ -41,29 +41,29 @@ public class EmployeeService {
         }
     }
 
-  @Transactional
-  public Map<String, Object> getEmployeeById(Integer employeeID) {
-    try {
-        Employee employee = employeeRepo.findById(employeeID).orElseThrow(() -> new Exception("Employee not found"));
-        EmployeeDto employeeDto = new EmployeeDto(employee.getEmployeeID(), employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getPhoneNumber(), employee.getHireDate(), employee.getJobTitle(), employee.getSalary(), employee.getBranchID(), employee.getIsActive());
-        BranchDto branchDto = apiService.getBranch(employee.getBranchID());
-        Map<String, Object> result = new HashMap<>();
-        result.put("employee", employeeDto);
-        result.put("branch", branchDto);
+    @Transactional
+    public Map<String, Object> getEmployeeById(Integer employeeID) {
+        try {
+            Employee employee = employeeRepo.findById(employeeID).orElseThrow(() -> new Exception("Employee not found"));
+            EmployeeDto employeeDto = new EmployeeDto(employee.getEmployeeID(), employee.getFirstName(), employee.getLastName(), employee.getEmail(), employee.getPhoneNumber(), employee.getHireDate(), employee.getJobTitle(), employee.getSalary(), employee.getBranchID(), employee.getIsActive());
+            BranchDto branchDto = apiService.getBranch(employee.getBranchID());
+            Map<String, Object> result = new HashMap<>();
+            result.put("employee", employeeDto);
+            result.put("branch", branchDto);
 
-        return result;
-    } catch (Exception e) {
-        logger.error("Error getting employee by id: {}", e.getMessage());
-        return Collections.emptyMap();
+            return result;
+        } catch (Exception e) {
+            logger.error("Error getting employee by id: {}", e.getMessage());
+            return Collections.emptyMap();
+        }
     }
-}
 
     @Transactional
     public String saveEmployee(EmployeeDto employeeDto) {
         try {
             Employee employee;
             if (employeeDto.getEmployeeID() != null) {
-                employee = employeeRepo.findById(employeeDto.getEmployeeID()).orElseThrow(() -> new Exception("Employee not found"));
+                employee = employeeRepo.findById(employeeDto.getEmployeeID()).orElseThrow(() -> new Exception("Employee exist"));
 
             } else {
                 employee = new Employee();
@@ -85,6 +85,34 @@ public class EmployeeService {
             logger.error("Failed to save employee: {}", e.getMessage());
             return "Failed to save employee";
         }
+    }
+
+    @Transactional
+    public Employee saveEmployee2(EmployeeDto employeeDto) {
+        Employee employee = new Employee();
+        try {
+
+            employee = new Employee();
+            employee.setCreateDate(LocalDateTime.now());
+
+            employee.setFirstName(employeeDto.getFirstName());
+            employee.setLastName(employeeDto.getLastName());
+            employee.setEmail(employeeDto.getEmail());
+            employee.setPhoneNumber(employeeDto.getPhoneNumber());
+            employee.setHireDate(employeeDto.getHireDate());
+            employee.setJobTitle(employeeDto.getJobTitle());
+            employee.setSalary(employeeDto.getSalary());
+            employee.setBranchID(employeeDto.getBranchID());
+            employee.setIsActive(true);
+            employeeRepo.save(employee);
+            logger.info("Employee saved successfully");
+
+        } catch (Exception e) {
+            logger.error("Failed to save employee: {}", e.getMessage());
+            // return null;
+            //return "Failed to save employee";
+        }
+        return employee;
     }
 
     @Transactional

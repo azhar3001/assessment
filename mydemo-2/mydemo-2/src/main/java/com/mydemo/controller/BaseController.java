@@ -2,14 +2,18 @@ package com.mydemo.controller;
 
 import com.mydemo.model.data.EmployeeDto;
 import com.mydemo.model.data.EmployeeListDto;
+import com.mydemo.model.entity.Employee;
 import com.mydemo.service.EmployeeService;
 import lombok.AllArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -44,7 +48,19 @@ public class BaseController {
     public String saveEmployee(EmployeeDto employeeDto) {
         logger.info("Save employee");
         return employeeService.saveEmployee(employeeDto);
-        
+
+    }
+
+    @PostMapping("/saveEmployee2")
+    public ResponseEntity<Employee> saveEmployee2(@RequestBody EmployeeDto employeeDto) {
+        // Add any validation if needed
+        if (employeeDto.getEmail() == null || employeeDto.getEmail().isEmpty()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(null); // Bad request if email is not provided
+        }
+
+        Employee savedEmployee = employeeService.saveEmployee2(employeeDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedEmployee);
     }
 
     @PostMapping("/deleteEmployee")
