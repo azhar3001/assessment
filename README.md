@@ -21,6 +21,10 @@ http://localhost:8080/saveEmployee2
   "hireDate": "2023-01-01",
   "jobTitle": "Software Engineer",
   "salary": 75000,
-  "branchID": "101",
+  "branchID": "01",
   "isActive": true
 }
+
+
+//branch ID should be value from 01 - 14
+so, it can be triggered by 3rd party API  to get info of branch
