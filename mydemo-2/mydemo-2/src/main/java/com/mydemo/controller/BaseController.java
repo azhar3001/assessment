@@ -38,6 +38,13 @@ public class BaseController {
         return employeeService.getAllEmployees();
     }
 
+    @GetMapping ("/listAllEmployeeByPage")
+    public ResponseEntity<List<EmployeeListDto>> listAllEmployeeByPage(Pageable pageable) {
+        Page<EmployeeListDto> usersPage = employeeService.getAllEmployeesByPage(pageable);
+        return new ResponseEntity<>(usersPage.getContent(), HttpStatus.OK);
+    }
+
+
     @PostMapping("/listAllByPage")
     public Page<EmployeeListDto> listAllByPage(Pageable pageable) {
         logger.info("List all employees by page");
